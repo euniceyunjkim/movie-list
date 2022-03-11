@@ -12,6 +12,8 @@ class App extends React.Component {
      movies: movies,
      value: '',
      add: '',
+     watched: [],
+     toWatch: []
    }
  }
 
@@ -32,9 +34,7 @@ addMoviesList (input) {
 }
 
 findMovie (search, callback) {
-
   if(callback) {
-
     let input = search.toLowerCase();
     let result = [];
 
@@ -47,7 +47,7 @@ findMovie (search, callback) {
     }
 
     if (result.length === 0) {
-      result.push({title: 'no movie by that name found'})
+      result.push({title: 'no movie by that name found', status: 'return'})
     }
 
     callback(result);
@@ -56,9 +56,39 @@ findMovie (search, callback) {
 
 addedMovies (input, callback) {
   if (callback) {
-    movies.push({title: input});
+    movies.push({title: input, status: "to watch"});
     callback(movies);
   }
+}
+
+change (movie) {
+  let current = movie;
+
+  if (current.status === "to watch") {
+    current.status = "watched";
+    this.filter("watched");
+  } else {
+    current.status = "to watch";
+    // this.state.toWatch.push(current);
+    this.filter("to watch");
+  }
+}
+
+filter (clicked) {
+  let result = [];
+
+  for (var i = 0; i < movies.length; i++) {
+    let current = movies[i];
+    let status = current.status;
+    if (status === clicked) {
+      result.push(current);
+    }
+  }
+
+  this.setState({
+    movies: result
+  })
+
 }
 
 render () {
@@ -68,16 +98,18 @@ render () {
       <div className= "add">
         <AddMoviesBar addInput= {this.addMoviesList.bind(this)}/>
       </div>
+      <button className= "watched" onClick={() => this.filter("watched")}>Watched</button>
+      <button className= "to-watch" onClick={() => this.filter("to watch")}>To Watch</button>
       <div className= "search">
         <SearchBar searchInput= {this.filterMovieList.bind(this)}/>
       </div>
       <div className= "movielist">
-      {this.state.movies.map((movie) => <MovieList movie= {movie}/>)}
+      {this.state.movies.map((movie) => <MovieList movie= {movie} update= {this.change.bind(this)}/>)}
       </div>
     </div>
   );
-}
 
+}
 }
 
 export default App;

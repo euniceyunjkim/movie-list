@@ -16,7 +16,7 @@ class SearchBar extends React.Component {
 
   render () {
     return (
-      <div className = "search-bar">
+      <div className = "search-bar"> Movie List Search:
         <input className = "search-input-form" type ="text" value={this.state.value} onChange={this.searchChange.bind(this)}/>
       </div>
     )
